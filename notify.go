@@ -33,10 +33,9 @@ func (c *notificationClient) showVolumeNotification(volume int, mute bool) error
 		AppIcon:       c.notificationVolumeIcon(volume, mute),
 		ReplacesID:    c.store.LastNoficationID(),
 		ExpireTimeout: int32(3000),
-		Hints: map[string]dbus.Variant{
-			"value":       dbus.MakeVariant(volume),
-			"synchronous": dbus.MakeVariant("volume"),
-		},
+		Hints:         map[string]dbus.Variant{},
+		Summary:       "Volume",
+		Body:          c.notificationVolumeText(volume, mute),
 	}
 
 	notificationID, err := notify.SendNotification(conn, n)
@@ -47,17 +46,24 @@ func (c *notificationClient) showVolumeNotification(volume int, mute bool) error
 }
 
 func (c *notificationClient) notificationVolumeIcon(volume int, mute bool) string {
-	iconName := "notification-audio-volume-medium"
+	iconName := "audio-volume-medium"
 	if mute {
-		iconName = "notification-audio-volume-muted"
+		iconName = "audio-volume-muted"
 	} else if volume == 0 {
-		iconName = "notification-audio-volume-off"
+		iconName = "audio-volume-off"
 	} else if volume > 70 {
-		iconName = "notification-audio-volume-high"
+		iconName = "audio-volume-high"
 	} else if volume < 30 {
-		iconName = "notification-audio-volume-low"
+		iconName = "audio-volume-low"
 	}
 	return iconName
+}
+
+func (c *notificationClient) notificationVolumeText(volume int, mute bool) string {
+	if mute {
+		return "Mute"
+	}
+	return strconv.Itoa(volume) + "%"
 }
 
 func showVolumeNotification(volume int, mute bool) error {

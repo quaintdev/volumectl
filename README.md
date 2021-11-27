@@ -1,5 +1,6 @@
 # volumectl - CLI utility to control the volume
 
+*This fork fixes issue of empty notification on sway*
 
 ## Features
 
